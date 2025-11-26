@@ -24,7 +24,34 @@ var ismyturn = false
 var hand = []
 
 func _ready():
-	Firebase.Auth.login_anonymous()
+	#test
+	Firebase.Auth.signup_succeeded.connect(TESTLOGIN)
+	await Firebase.Auth.login_anonymous()
+	get_tree().set_auto_accept_quit(false)
+
+####TESTING####
+func _notification(what):
+	if (what == NOTIFICATION_WM_CLOSE_REQUEST):
+		if player == 1:
+			print("im closing it")
+			var ref : FirebaseDatabaseReference= Firebase.Database.get_database_reference("HCG-servers",{})
+			ref.delete(TESTSID)
+			ref.delete("serverList/"+TESTSID)
+			await get_tree().create_timer(1).timeout
+			print("got to the end!!!")
+		
+		get_tree().quit()
+
+var TESTSID = "TESTINGLAB"
+func TESTLOGIN(d):
+	if OS.get_cmdline_args().has("2"):
+		print("im waiting it")
+		await get_tree().create_timer(1).timeout
+	$serverid/LineEdit.text = TESTSID
+	_on_serverid_pressed()
+###############
+
+
 
 #ignore!
 func buttonAction(idx):
@@ -186,6 +213,10 @@ func draw(count):
 		var cardi : CardNode = cardScene.instantiate()
 		cardi.setCard(hand[-1])
 		$console/ScrollContainer/HBoxContainer.add_child(cardi)
+		cardi.mouseEntered.connect(func():cardi.popUp())
+		cardi.mouseExited.connect(func():cardi.popDown())
+		cardi.clicked.connect(handCardClicked.bind(cardi))
+		
 
 var icon = preload("res://assets/icon.svg")
 
@@ -200,9 +231,11 @@ func setOppHandCount(cnt):
 		t.texture = icon
 		$oppbar/ScrollContainer/HBoxContainer.add_child(t)
 
+
+var startedTurnAlready = false
 #called whenever data in the server is updated. NEVER CALLED BY CLIENT
 func dataUpdate(d):
-	
+	if d.data==null:return
 	#handle init and setup
 	if !initStarted:
 		init()
@@ -217,22 +250,21 @@ func dataUpdate(d):
 		return
 	
 	#handle turn switches
-	print(sid + str(d))
 	var data = await getData("HCG-servers/"+sid)
-	print(data)
 	
 	var wasmyturn = ismyturn
 	ismyturn = data.currentTurn == player
-	
 	#on a new turn, call turnStart (am i overcommenting)
-	if ismyturn and not wasmyturn:
+	if ismyturn and not wasmyturn and not startedTurnAlready:
 		turnStart(data)
 
 #handles the start of a turn. PROBABLY NOT EVER CALLED BY YOU (yes, I mean you)
 #@param <data>:Dictionary, all the data of the server at the start of the turn
 func turnStart(data):
 	
+	startedTurnAlready = true
 	#do some random start of turn stuff
+	print("I am player"+str(player)+" and i am starting my turn now even though it is turn "+str(data.currentTurn))
 	$endTurn.visible = true
 	
 	if player==1:
@@ -256,10 +288,11 @@ var turnsActions = ["-1"]
 
 #ends a turn. called when end turn button is pressed.
 func _on_end_turn_pressed():
-	$endTurn.visible = false
 	db_ref.update("",{"turns":turnsActions})
 	db_ref.update("player"+str(player),{"handCount":len(hand)})
 	db_ref.update("",{"currentTurn":1 if player == 2 else 2})
+	$endTurn.visible = false
+	startedTurnAlready = false
 
 #performs an action based off the data present in the action string.
 #both clients will call execAction to handle actions in order to ensure deterministic behavior.
@@ -270,4 +303,9 @@ func _on_end_turn_pressed():
 func execAction(action):
 	
 	##what the button action
+	pass
+
+#handles when a card in the hand is clicked
+#@param <card>:CardNode, reference to the card node in hand
+func handCardClicked(card : CardNode):
 	pass

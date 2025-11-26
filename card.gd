@@ -4,6 +4,8 @@ signal mouseEntered
 signal mouseExited
 signal clicked
 
+var cardName : String
+
 func _on_mouse_entered():
 	mouseEntered.emit()
 
@@ -18,6 +20,7 @@ func _on_gui_input(event:InputEvent):
 			clicked.emit()
 
 func setCard(card):
+	cardName = card
 	var d = GameData.cards[card]
 	$bg/TextureRect.texture = d.sprite
 	setHP(d.hp)
