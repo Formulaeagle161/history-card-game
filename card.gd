@@ -13,7 +13,6 @@ func _on_mouse_entered():
 func _on_mouse_exited():
 	mouseExited.emit()
 
-
 func _on_gui_input(event:InputEvent):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -33,6 +32,8 @@ func setATK(atk):
 	$bg/atk/Label.text = str(atk)
 
 func popUp():
+	print("wewe")
 	$bg.position.y = -100
+
 func popDown():
 	$bg.position.y = 0

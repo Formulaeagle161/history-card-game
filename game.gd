@@ -212,7 +212,7 @@ func draw(count):
 		#add card object to displayed hand in bottom left
 		var cardi : CardNode = cardScene.instantiate()
 		cardi.setCard(hand[-1])
-		$console/ScrollContainer/HBoxContainer.add_child(cardi)
+		$console/ScrollContainer/VBoxContainer/HBoxContainer.add_child(cardi)
 		cardi.mouseEntered.connect(func():cardi.popUp())
 		cardi.mouseExited.connect(func():cardi.popDown())
 		cardi.clicked.connect(handCardClicked.bind(cardi))

@@ -28,12 +28,14 @@ script = ExtResource("1_rjlel")
 layout_mode = 0
 offset_right = 122.0
 offset_bottom = 206.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_nxf5b")
 
 [node name="TextureRect" type="TextureRect" parent="bg"]
 layout_mode = 0
 offset_right = 122.0
 offset_bottom = 206.0
+mouse_filter = 2
 texture = ExtResource("1_kikvd")
 expand_mode = 1
 stretch_mode = 4
@@ -43,6 +45,7 @@ layout_mode = 0
 offset_top = 166.0
 offset_right = 40.0
 offset_bottom = 206.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_kikvd")
 
 [node name="Label" type="Label" parent="bg/atk"]
@@ -58,6 +61,7 @@ offset_left = 82.0
 offset_top = 166.0
 offset_right = 122.0
 offset_bottom = 206.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_rjlel")
 
 [node name="Label" type="Label" parent="bg/hp"]
